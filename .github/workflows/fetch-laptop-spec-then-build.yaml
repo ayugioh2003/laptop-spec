@@ -1,3 +1,5 @@
+# https://medium.com/starbugs/3dd2d70eeb
+# https://github.com/peaceiris/actions-gh-pages
 name: fetch-laptop-spec-then-build
 
 on:
@@ -5,15 +7,14 @@ on:
     branches:
       - main  # Set a branch name to trigger deployment
   pull_request:
+  schedule: 
+    - cron: "0 */8 * * * " # update every 8 hours
 
 jobs:
   deploy:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-        with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
       - name: Install
         run: npm install
