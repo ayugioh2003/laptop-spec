@@ -1,6 +1,7 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + Vite" />
+  <div id="app">
+    <HelloWorld msg="Hello Vue 3 + Vite" />
+  </div>
 </template>
 
 <script setup>
@@ -12,11 +13,7 @@ import HelloWorld from './components/HelloWorld.vue'
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 </style>

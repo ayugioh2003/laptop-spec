@@ -72,7 +72,7 @@ const callbackFunction = function (error, response, body) {
       return nameText.split(' ')[0];
     },
     getSize(sizeText) {
-      return sizeText.match(/尺寸：(\d+\.?\d).+/)?.[1]
+      return Number(sizeText.match(/尺寸：(\d+\.?\d).+/)?.[1])
     },
     getCpu(cpuText) {
       const splitArr = cpuText.split(' ');
@@ -171,6 +171,7 @@ const callbackFunction = function (error, response, body) {
       weight: methods.getWeight(item.weight),
       price: methods.getPrice(item.price), // 11
       date: dayjs().format('YYYY-MM-DD'),
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
     };
 
     const template = {
@@ -184,11 +185,11 @@ const callbackFunction = function (error, response, body) {
   todayObj.setUTCHours(todayObj.getUTCHours() + 8)
   const todayString = todayObj.toISOString().slice(0, 10);
 
-  fs.writeFile(`./src/assets/result/${todayString}.json`, JSON.stringify(laptopResult), 
-    function(err, data) {
-      if (err) throw err;
-    }
-  )
+  // fs.writeFile(`./src/assets/result/${todayString}.json`, JSON.stringify(laptopResult), 
+  //   function(err, data) {
+  //     if (err) throw err;
+  //   }
+  // )
   fs.writeFile(`./src/assets/result/latest_date.json`, JSON.stringify(laptopResult), 
     function(err, data) {
       if (err) throw err;
