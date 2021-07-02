@@ -15,4 +15,6 @@ export default defineConfig({
     { find: '@hooks', replacement: resolve('src/hooks') },
     { find: '@utils', replacement: resolve('src/utils') },
   ],
+  // https://blog.csdn.net/qq_17497931/article/details/109510796
+  base: '.',
 })
