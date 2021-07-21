@@ -57,6 +57,7 @@ const callbackFunction = function (error, response, body) {
     .filter((item) => !JSON.stringify(item).includes('手錶'))
     .filter((item) => !JSON.stringify(item).includes('手機'))
     .filter((item) => !JSON.stringify(item).includes('充電器'))
+    .filter((item) => !JSON.stringify(item).includes('快充'))
     .map((item, index) => {
       return {
         index: index + 1 ,
@@ -158,6 +159,7 @@ const callbackFunction = function (error, response, body) {
   };
 
   const laptopResult = onlyLaptopResult.map(item => {
+    console.log('item', item)
     const property = {
       brand: methods.getBrand(item.name),
       size: methods.getSize(item.size),
