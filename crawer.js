@@ -95,9 +95,9 @@ const callbackFunction = function (error, response, body) {
       }
     },
     getRamMax(ramText) {
-      const regularResult_G = ramText.match(/Max ([0-9]*)G/)
+      const regularResult_G = ramText.match(/Max ([0-9]*)G/) || ramText.match(/Max([0-9]*)G/)
       const regularResultDotG = ramText.match(/Max\.([0-9]*)G/)
-      const regularResultColonG = ramText.match(/Max\: ([0-9]*)G/)
+      const regularResultColonG = ramText.match(/Max\: ([0-9]*)G/) || ramText.match(/Max\:([0-9]*)G/)
 
       if (
         regularResult_G == null &&
