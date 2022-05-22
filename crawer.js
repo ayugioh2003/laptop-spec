@@ -70,7 +70,8 @@ const callbackFunction = function (error, response, body) {
   const methods =  {
     getBrand(nameText) {
       if (nameText.includes('捷元')) return '捷元'
-      return nameText.split(' ')[0];
+      console.log('naemText', nameText)
+      return [...nameText].filter(char => char !== '★').join('').split(' ')[0];
     },
     getSize(sizeText) {
       return Number(sizeText.match(/尺寸：(\d+\.?\d).+/)?.[1])
