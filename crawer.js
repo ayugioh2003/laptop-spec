@@ -54,7 +54,7 @@ const callbackFunction = function (error, response, body) {
   const onlyLaptopResult = result
     .filter((item) => !JSON.stringify(item).includes('電源'))
     .filter((item) => !JSON.stringify(item).includes('相機'))
-    .filter((item) => !JSON.stringify(item).includes('手錶'))
+    .filter((item) => !JSON.stringify(item).includes('錶'))
     .filter((item) => !JSON.stringify(item).includes('手機'))
     .filter((item) => !JSON.stringify(item).includes('充電器'))
     .filter((item) => !JSON.stringify(item).includes('快充'))
@@ -126,7 +126,7 @@ const callbackFunction = function (error, response, body) {
       }
     },
     getVGA(vgaText) {
-      console.log(vgaText)
+      console.log('vgaText', vgaText)
       const cleanString = vgaText.split('VGA：')[1]
       const brand = cleanString?.[0]
       if (brand === 'Intel') return 'Intel'
