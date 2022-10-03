@@ -31,14 +31,19 @@ const callbackFunction = function (error, response, body) {
     const card = cardList[i];
 
     console.log('card.children.length', card.children.length);
-    if (card.children.length < 11) {
+    const saveNumber = 12
+    if (card.children.length < saveNumber) {
       continue;
     }
+
+    const unUselessElementIndex = 2 // 好像是換行符號，最近加進來的，會影響 index
+    card.children = card.children.filter((child, index) => index !== unUselessElementIndex)
+    console.log('card', cheerio.load(card).html())
 
     const template = {
       img: card.children[0].attribs.src,
       name: card.children[1].children[0].data,
-      size: card.children[2].children[0].data,
+      size: card.children[2].children?.[0].data || '',
       cpu: card.children[3].children[0].data,
       ram: card.children[4].children[0].data,
       ssd: card.children[5].children[0].data,
@@ -70,7 +75,7 @@ const callbackFunction = function (error, response, body) {
   const methods =  {
     getBrand(nameText) {
       if (nameText.includes('捷元')) return '捷元'
-      console.log('naemText', nameText)
+      console.log('nameText', nameText)
       return [...nameText].filter(char => char !== '★').join('').split(' ')[0];
     },
     getSize(sizeText) {
