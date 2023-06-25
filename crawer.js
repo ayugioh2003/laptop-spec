@@ -132,7 +132,7 @@ const callbackFunction = function (error, response, body) {
     },
     getVGA(vgaText) {
       console.log('vgaText', vgaText)
-      const cleanString = vgaText.split('VGA：')[1]
+      const cleanString = vgaText.split('VGA：')[1] || vgaText.split('獨顯：')[1]
       const brand = cleanString?.[0]
       if (brand === 'Intel') return 'Intel'
       return cleanString.split(' ').splice(0, 2).join(' ')
