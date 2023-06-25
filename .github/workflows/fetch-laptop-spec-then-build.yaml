@@ -8,7 +8,7 @@ on:
       - main # Set a branch name to trigger deployment
   pull_request:
   schedule:
-    - cron: '0 */8 * * * ' # update every 8 hours
+    - cron: '0 */24 * * * ' # update every 24 hours
 
 jobs:
   deploy:
@@ -20,7 +20,7 @@ jobs:
         run: npm install
 
       - name: fetch laptop data
-        run: node crawer.js
+        run: node crawler.js
 
       - name: Build
         run: npm run build
