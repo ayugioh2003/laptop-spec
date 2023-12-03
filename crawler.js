@@ -63,6 +63,7 @@ const callbackFunction = function (error, response, body) {
     .filter((item) => !JSON.stringify(item).includes('手機'))
     .filter((item) => !JSON.stringify(item).includes('充電器'))
     .filter((item) => !JSON.stringify(item).includes('快充'))
+    .filter((item) => !JSON.stringify(item).includes('IO擴充充電DOCK'))
     .map((item, index) => {
       return {
         index: index + 1 ,
@@ -132,9 +133,10 @@ const callbackFunction = function (error, response, body) {
     },
     getVGA(vgaText) {
       console.log('vgaText', vgaText)
-      const cleanString = vgaText.split('VGA：')[1] || vgaText.split('獨顯：')[1]
+      const cleanString = vgaText.split('VGA：')[1] || vgaText.split('獨顯：')[1] || vgaText.split('內顯：')[1]
       const brand = cleanString?.[0]
       if (brand === 'Intel') return 'Intel'
+      console.log('cleanString', cleanString)
       return cleanString.split(' ').splice(0, 2).join(' ')
     },
     getThunderbolt(interfaceText) {
