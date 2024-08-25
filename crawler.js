@@ -56,6 +56,8 @@ const callbackFunction = function (error, response, body) {
     result.push(template);
   }
 
+  console.log('result', result[0])
+  console.log('-----------')
   const onlyLaptopResult = result
     .filter((item) => !JSON.stringify(item).includes('電源'))
     .filter((item) => !JSON.stringify(item).includes('相機'))
@@ -64,6 +66,7 @@ const callbackFunction = function (error, response, body) {
     .filter((item) => !JSON.stringify(item).includes('充電器'))
     .filter((item) => !JSON.stringify(item).includes('快充'))
     .filter((item) => !JSON.stringify(item).includes('IO擴充充電DOCK'))
+    .filter((item) => /內顯|獨顯/.test(JSON.stringify(item)))
     .map((item, index) => {
       return {
         index: index + 1 ,
