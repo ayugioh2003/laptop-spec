@@ -127,9 +127,7 @@ import { defineProps, reactive, computed } from 'vue'
 import laptopSpecs from '@assets/result/latest_date.json'
 
 // 接收父層 props
-defineProps({
-  msg: String,
-})
+defineProps({})
 
 const initForm = {
   sizeMin: 13,
