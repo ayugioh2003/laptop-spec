@@ -3,12 +3,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vue-tsc && vite build",
     "serve": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "type-check": "vue-tsc --noEmit",
+    "crawler": "node crawler.js",
+    "crawler:ts": "tsx crawler.ts"
   },
   "dependencies": {
+    "@tanstack/vue-virtual": "^3.13.12",
     "axios": "^1.10.0",
     "cheerio": "^1.0.0-rc.10",
     "dayjs": "^1.10.5",
@@ -16,9 +20,15 @@
     "vue": "^3.5.0"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.35",
+    "@types/node": "^24.0.13",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vue/compiler-sfc": "^3.5.0",
+    "@vue/tsconfig": "^0.7.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
     "vite": "^7.0.4",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vue-tsc": "^3.0.1"
   }
 }

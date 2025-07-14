@@ -16,6 +16,7 @@ export default defineConfig({
       { find: '@components', replacement: resolve('src/components') },
       { find: '@hooks', replacement: resolve('src/hooks') },
       { find: '@utils', replacement: resolve('src/utils') },
+      { find: '@services', replacement: resolve('src/services') },
     ],
   },
   // https://blog.csdn.net/qq_17497931/article/details/109510796

@@ -1,0 +1,348 @@
+<template>
+  <div class="product-list">
+    <div class="list-header">
+      <h2>筆電列表</h2>
+      <div class="sort-controls">
+        <label>排序方式：</label>
+        <select v-model="sortBy" @change="handleSort">
+          <option value="default">預設</option>
+          <option value="price-asc">價格：低到高</option>
+          <option value="price-desc">價格：高到低</option>
+          <option value="size-asc">尺寸：小到大</option>
+          <option value="size-desc">尺寸：大到小</option>
+          <option value="weight-asc">重量：輕到重</option>
+          <option value="weight-desc">重量：重到輕</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="view-toggle">
+      <button 
+        @click="viewMode = 'grid'" 
+        :class="{ active: viewMode === 'grid' }"
+        class="view-btn"
+      >
+        📱 卡片視圖
+      </button>
+      <button 
+        @click="viewMode = 'list'" 
+        :class="{ active: viewMode === 'list' }"
+        class="view-btn"
+      >
+        📋 列表視圖
+      </button>
+    </div>
+
+    <div v-if="sortedProducts.length === 0" class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>找不到符合條件的筆電</h3>
+      <p>請調整篩選條件或重設篩選器</p>
+    </div>
+
+    <div v-else>
+      <!-- 卡片視圖 -->
+      <div v-if="viewMode === 'grid'" class="products-grid">
+        <ProductCard
+          v-for="product in paginatedProducts"
+          :key="product.index"
+          :product="product"
+        />
+      </div>
+
+      <!-- 列表視圖 -->
+      <div v-else class="products-table">
+        <table>
+          <thead>
+            <tr>
+              <th>產品名稱</th>
+              <th>品牌</th>
+              <th>尺寸</th>
+              <th>CPU</th>
+              <th>記憶體</th>
+              <th>顯卡</th>
+              <th>重量</th>
+              <th>價格</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="product in paginatedProducts" :key="product.index">
+              <td>
+                <a :href="`https://www.google.com/search?q=${product.name}`" target="_blank">
+                  {{ product.name }}
+                </a>
+              </td>
+              <td>{{ product.property.brand }}</td>
+              <td>{{ product.property.size }}"</td>
+              <td>{{ product.property.cpu }}</td>
+              <td>{{ product.property.ramBasic }}GB</td>
+              <td>{{ product.property.vga }}</td>
+              <td>{{ product.property.weight }}kg</td>
+              <td class="price">NT$ {{ formatPrice(product.property.price) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 分頁 -->
+      <div class="pagination" v-if="totalPages > 1">
+        <button 
+          @click="currentPage = 1" 
+          :disabled="currentPage === 1"
+          class="page-btn"
+        >
+          ⏮️
+        </button>
+        <button 
+          @click="currentPage--" 
+          :disabled="currentPage === 1"
+          class="page-btn"
+        >
+          ⏪
+        </button>
+        
+        <span class="page-info">
+          {{ currentPage }} / {{ totalPages }}
+        </span>
+        
+        <button 
+          @click="currentPage++" 
+          :disabled="currentPage === totalPages"
+          class="page-btn"
+        >
+          ⏩
+        </button>
+        <button 
+          @click="currentPage = totalPages" 
+          :disabled="currentPage === totalPages"
+          class="page-btn"
+        >
+          ⏭️
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, watch } from 'vue'
+import ProductCard from './ProductCard.vue'
+
+const props = defineProps({
+  products: {
+    type: Array,
+    default: () => []
+  }
+})
+
+const sortBy = ref('default')
+const viewMode = ref('grid')
+const currentPage = ref(1)
+const pageSize = 12
+
+const sortedProducts = computed(() => {
+  let sorted = [...props.products]
+  
+  switch (sortBy.value) {
+    case 'price-asc':
+      sorted.sort((a, b) => a.property.price - b.property.price)
+      break
+    case 'price-desc':
+      sorted.sort((a, b) => b.property.price - a.property.price)
+      break
+    case 'size-asc':
+      sorted.sort((a, b) => a.property.size - b.property.size)
+      break
+    case 'size-desc':
+      sorted.sort((a, b) => b.property.size - a.property.size)
+      break
+    case 'weight-asc':
+      sorted.sort((a, b) => a.property.weight - b.property.weight)
+      break
+    case 'weight-desc':
+      sorted.sort((a, b) => b.property.weight - a.property.weight)
+      break
+    default:
+      // 保持原順序
+      break
+  }
+  
+  return sorted
+})
+
+const totalPages = computed(() => {
+  return Math.ceil(sortedProducts.value.length / pageSize)
+})
+
+const paginatedProducts = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  const end = start + pageSize
+  return sortedProducts.value.slice(start, end)
+})
+
+// 當產品列表改變時重設頁面
+watch(() => props.products, () => {
+  currentPage.value = 1
+})
+
+function handleSort() {
+  currentPage.value = 1
+}
+
+function formatPrice(price) {
+  return new Intl.NumberFormat('zh-TW').format(price)
+}
+</script>
+
+<style scoped>
+.product-list {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.list-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-controls label {
+  font-weight: 500;
+  color: #666;
+}
+
+.sort-controls select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.view-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-btn:hover {
+  background: #f8f9fa;
+}
+
+.view-btn.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.products-table {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+.products-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.products-table th,
+.products-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.products-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #333;
+}
+
+.products-table td a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.products-table td a:hover {
+  text-decoration: underline;
+}
+
+.products-table .price {
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.page-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-weight: 500;
+  color: #666;
+}
+</style>
