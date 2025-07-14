@@ -1,11 +1,6 @@
 <template>
   <div class="product-card">
     <div class="product-header">
-      <LazyImage 
-        :src="product.img" 
-        :alt="product.name" 
-        image-class="product-image"
-      />
       <div class="product-title">
         <h3>
           <a :href="`https://www.google.com/search?q=${product.name}`" target="_blank">
@@ -61,8 +56,6 @@
 </template>
 
 <script setup>
-import LazyImage from './LazyImage.vue'
-
 defineProps({
   product: {
     type: Object,
@@ -94,27 +87,11 @@ function formatDate(dateString) {
 }
 
 .product-header {
-  display: flex;
-  gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.product-image {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid #eee;
-}
-
-.product-header .lazy-image-container {
-  width: 80px;
-  height: 80px;
-  min-height: 80px;
-}
-
 .product-title {
-  flex: 1;
+  width: 100%;
 }
 
 .product-title h3 {
