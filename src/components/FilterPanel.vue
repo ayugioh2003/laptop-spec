@@ -292,6 +292,7 @@ select {
 
 .range-input input {
   flex: 1;
+  width: 100%;
 }
 
 .single-input input {
