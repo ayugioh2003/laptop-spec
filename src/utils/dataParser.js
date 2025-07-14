@@ -20,7 +20,7 @@ export function extractRawProductData(card) {
   return {
     img: card.children[0].attribs.src,
     name: card.children[1].children[0].data,
-    size: card.children[2].children?.[0].data || '',
+    size: card.children[2].children?.[0]?.data || '',
     cpu: card.children[3].children[0].data,
     ram: card.children[4].children[0].data,
     ssd: card.children[5].children[0].data,
