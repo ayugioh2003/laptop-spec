@@ -1,8 +1,8 @@
-const request = require('request');
-const cheerio = require('cheerio');
-const iconv = require('iconv-lite')
-const fs = require('fs');
-const dayjs = require('dayjs')
+import request from 'request';
+import cheerio from 'cheerio';
+import iconv from 'iconv-lite';
+import fs from 'fs';
+import dayjs from 'dayjs';
 
 // const axios = require('axios');
 // const { default: Axios } = require('axios');
