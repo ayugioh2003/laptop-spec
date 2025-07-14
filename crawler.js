@@ -1,26 +1,19 @@
-import request from 'request';
+import axios from 'axios';
 import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 import fs from 'fs';
 import dayjs from 'dayjs';
-
-// const axios = require('axios');
-// const { default: Axios } = require('axios');
+import { CRAWLER_CONFIG } from './config.js';
 
 const config = {
-  url: 'http://www.coolpc.com.tw/eachview.php?IGrp=2',
-  encoding: 'utf8',
+  url: CRAWLER_CONFIG.URL,
   method: 'GET',
-  encoding: 'binary',
+  responseType: 'arraybuffer', // 用於處理二進制資料
 };
 
-const callbackFunction = function (error, response, body) {
-  if (error || !body) {
-    console.log(error);
-    return;
-  }
-
-  body = iconv.decode(body, 'big5')
+const processData = async function (responseData) {
+  try {
+    const body = iconv.decode(Buffer.from(responseData), CRAWLER_CONFIG.ENCODING);
 
   const $ = cheerio.load(body); // 載入 body
   const cardList = $('.main').find('span')
@@ -30,15 +23,13 @@ const callbackFunction = function (error, response, body) {
   for (let i = 0; i < cardListLength; i += 1) {
     const card = cardList[i];
 
-    console.log('card.children.length', card.children.length);
-    const saveNumber = 12
+    const saveNumber = CRAWLER_CONFIG.MIN_CHILDREN
     if (card.children.length < saveNumber) {
       continue;
     }
 
-    const unUselessElementIndex = 2 // 好像是換行符號，最近加進來的，會影響 index
+    const unUselessElementIndex = CRAWLER_CONFIG.REMOVE_USELESS_ELEMENT_INDEX // 好像是換行符號，最近加進來的，會影響 index
     card.children = card.children.filter((child, index) => index !== unUselessElementIndex)
-    console.log('card', cheerio.load(card).html())
 
     const template = {
       img: card.children[0].attribs.src,
@@ -56,17 +47,15 @@ const callbackFunction = function (error, response, body) {
     result.push(template);
   }
 
-  console.log('result', result[0])
-  console.log('-----------')
-  const onlyLaptopResult = result
-    .filter((item) => !JSON.stringify(item).includes('電源'))
-    .filter((item) => !JSON.stringify(item).includes('相機'))
-    .filter((item) => !JSON.stringify(item).includes('錶'))
-    .filter((item) => !JSON.stringify(item).includes('手機'))
-    .filter((item) => !JSON.stringify(item).includes('充電器'))
-    .filter((item) => !JSON.stringify(item).includes('快充'))
-    .filter((item) => !JSON.stringify(item).includes('IO擴充充電DOCK'))
-    .filter((item) => /內顯|獨顯/.test(JSON.stringify(item)))
+  let onlyLaptopResult = result;
+  
+  // 過濾掉不相關的產品
+  CRAWLER_CONFIG.FILTERS.EXCLUDED_KEYWORDS.forEach(keyword => {
+    onlyLaptopResult = onlyLaptopResult.filter(item => !JSON.stringify(item).includes(keyword));
+  });
+  
+  // 只保留包含顯卡資訊的產品
+  onlyLaptopResult = onlyLaptopResult.filter((item) => CRAWLER_CONFIG.FILTERS.REQUIRED_PATTERN.test(JSON.stringify(item)))
     .map((item, index) => {
       return {
         index: index + 1 ,
@@ -74,12 +63,10 @@ const callbackFunction = function (error, response, body) {
       }
     })
 
-  console.log('onlyLaptopResult', onlyLaptopResult)
 
   const methods =  {
     getBrand(nameText) {
       if (nameText.includes('捷元')) return '捷元'
-      console.log('nameText', nameText)
       return [...nameText].filter(char => char !== '★').join('').split(' ')[0];
     },
     getSize(sizeText) {
@@ -135,11 +122,9 @@ const callbackFunction = function (error, response, body) {
       }
     },
     getVGA(vgaText) {
-      console.log('vgaText', vgaText)
       const cleanString = vgaText.split('VGA：')[1] || vgaText.split('獨顯：')[1] || vgaText.split('內顯：')[1]
       const brand = cleanString?.[0]
       if (brand === 'Intel') return 'Intel'
-      console.log('cleanString', cleanString)
       return cleanString.split(' ').splice(0, 2).join(' ')
     },
     getThunderbolt(interfaceText) {
@@ -170,7 +155,6 @@ const callbackFunction = function (error, response, body) {
   };
 
   const laptopResult = onlyLaptopResult.map(item => {
-    console.log('item', item)
     const property = {
       brand: methods.getBrand(item.name),
       size: methods.getSize(item.size),
@@ -203,15 +187,29 @@ const callbackFunction = function (error, response, body) {
   //     if (err) throw err;
   //   }
   // )
-  fs.writeFile(`./src/assets/result/latest_date.json`, JSON.stringify(laptopResult), 
-    function(err, data) {
-      if (err) throw err;
-    }
-  )
+    fs.writeFile(`${CRAWLER_CONFIG.OUTPUT_PATH}latest_date.json`, JSON.stringify(laptopResult), 
+      function(err, data) {
+        if (err) {
+          console.error('寫入檔案失敗:', err);
+          throw err;
+        }
+        console.log('資料已成功寫入 latest_date.json');
+      }
+    )
+  } catch (error) {
+    console.error('處理資料時發生錯誤:', error);
+    throw error;
+  }
 }
 
 const getList = async function() {
-  request(config, callbackFunction)
+  try {
+    const response = await axios(config);
+    await processData(response.data);
+  } catch (error) {
+    console.error('爬蟲執行失敗:', error);
+    process.exit(1);
+  }
 }
 
 getList()
