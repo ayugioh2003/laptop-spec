@@ -46,30 +46,8 @@
         :vgas="getters.laptopVGAs"
       />
 
-      <!-- 效能模式切換 -->
-      <div class="performance-toggle">
-        <label>
-          <input 
-            type="checkbox" 
-            v-model="useVirtualization" 
-            @change="handleVirtualizationChange"
-          />
-          啟用虛擬滾動 (適用於大量資料)
-        </label>
-        <small v-if="useVirtualization">
-          虛擬滾動模式可以提升大量資料的渲染效能
-        </small>
-      </div>
-
       <!-- 產品列表 -->
-      <ProductList 
-        v-if="!useVirtualization"
-        :products="getters.filterLaptopSpecs" 
-      />
-      <VirtualizedProductList 
-        v-else
-        :products="getters.filterLaptopSpecs" 
-      />
+      <ProductList :products="getters.filterLaptopSpecs" />
     </div>
   </div>
 </template>
@@ -78,7 +56,6 @@
 import { reactive, computed, ref, onMounted } from 'vue'
 import FilterPanel from './FilterPanel.vue'
 import ProductList from './ProductList.vue'
-import VirtualizedProductList from './VirtualizedProductList.vue'
 import StatsPanel from './StatsPanel.vue'
 
 // 接收父層 props
@@ -88,7 +65,6 @@ defineProps({
 
 const loading = ref(true)
 const error = ref(null)
-const useVirtualization = ref(false)
 
 const initForm = {
   sizeMin: 13,
@@ -161,13 +137,6 @@ async function loadData() {
 
 function retryLoad() {
   loadData()
-}
-
-function handleVirtualizationChange() {
-  // 根據資料量自動建議使用虛擬滾動
-  if (useVirtualization.value && getters.filterLaptopSpecs.length < 50) {
-    console.log('資料量較少，可能不需要虛擬滾動')
-  }
 }
 
 onMounted(() => {
@@ -265,32 +234,6 @@ onMounted(() => {
 
 .retry-btn:hover {
   background: #0056b3;
-}
-
-.performance-toggle {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.performance-toggle label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-weight: 500;
-  color: #333;
-}
-
-.performance-toggle small {
-  display: block;
-  margin-top: 0.5rem;
-  color: #666;
-  font-style: italic;
 }
 
 @media (max-width: 768px) {

@@ -43,7 +43,7 @@
       <!-- 卡片視圖 -->
       <div v-if="viewMode === 'grid'" class="products-grid">
         <ProductCard
-          v-for="product in paginatedProducts"
+          v-for="product in sortedProducts"
           :key="product.index"
           :product="product"
         />
@@ -65,7 +65,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="product in paginatedProducts" :key="product.index">
+            <tr v-for="product in sortedProducts" :key="product.index">
               <td>
                 <a :href="`https://www.google.com/search?q=${product.name}`" target="_blank">
                   {{ product.name }}
@@ -83,48 +83,12 @@
         </table>
       </div>
 
-      <!-- 分頁 -->
-      <div class="pagination" v-if="totalPages > 1">
-        <button 
-          @click="currentPage = 1" 
-          :disabled="currentPage === 1"
-          class="page-btn"
-        >
-          ⏮️
-        </button>
-        <button 
-          @click="currentPage--" 
-          :disabled="currentPage === 1"
-          class="page-btn"
-        >
-          ⏪
-        </button>
-        
-        <span class="page-info">
-          {{ currentPage }} / {{ totalPages }}
-        </span>
-        
-        <button 
-          @click="currentPage++" 
-          :disabled="currentPage === totalPages"
-          class="page-btn"
-        >
-          ⏩
-        </button>
-        <button 
-          @click="currentPage = totalPages" 
-          :disabled="currentPage === totalPages"
-          class="page-btn"
-        >
-          ⏭️
-        </button>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import ProductCard from './ProductCard.vue'
 
 const props = defineProps({
@@ -136,8 +100,6 @@ const props = defineProps({
 
 const sortBy = ref('default')
 const viewMode = ref('grid')
-const currentPage = ref(1)
-const pageSize = 12
 
 const sortedProducts = computed(() => {
   let sorted = [...props.products]
@@ -169,23 +131,8 @@ const sortedProducts = computed(() => {
   return sorted
 })
 
-const totalPages = computed(() => {
-  return Math.ceil(sortedProducts.value.length / pageSize)
-})
-
-const paginatedProducts = computed(() => {
-  const start = (currentPage.value - 1) * pageSize
-  const end = start + pageSize
-  return sortedProducts.value.slice(start, end)
-})
-
-// 當產品列表改變時重設頁面
-watch(() => props.products, () => {
-  currentPage.value = 1
-})
-
 function handleSort() {
-  currentPage.value = 1
+  // 排序後不需要特別處理
 }
 
 function formatPrice(price) {
@@ -316,33 +263,4 @@ function formatPrice(price) {
   color: #e74c3c;
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-}
-
-.page-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #f8f9fa;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-info {
-  font-weight: 500;
-  color: #666;
-}
 </style>
