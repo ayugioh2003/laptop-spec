@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import VueDevTools from 'vite-plugin-vue-devtools'
 import path from 'path'
 import { fileURLToPath } from 'node:url'
 
@@ -8,7 +9,10 @@ const resolve = (dir) => path.resolve(path.dirname(fileURLToPath(import.meta.url
 // https://vitejs.dev/config/
 // https://github.com/zhaojianzz/elementPlus-manage-system/blob/main/vite.config.ts
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    VueDevTools()
+  ],
   resolve: {
     alias: [
       { find: '@', replacement: resolve('src') },
