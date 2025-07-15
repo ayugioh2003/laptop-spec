@@ -59,9 +59,7 @@ import ProductList from './ProductList.vue'
 import StatsPanel from './StatsPanel.vue'
 
 // 接收父層 props
-defineProps({
-  msg: String,
-})
+defineProps({})
 
 const loading = ref(true)
 const error = ref(null)
