@@ -9,7 +9,7 @@
     "test": "vitest",
     "test:run": "vitest run",
     "type-check": "vue-tsc --noEmit",
-    "crawler": "tsx crawler.ts"
+    "crawler": "node --experimental-strip-types crawler.ts"
   },
   "dependencies": {
     "@tanstack/vue-virtual": "^3.13.12",
@@ -24,7 +24,6 @@
     "@vitejs/plugin-vue": "^6.0.0",
     "@vue/compiler-sfc": "^3.5.0",
     "@vue/tsconfig": "^0.7.0",
-    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "vite": "^7.0.4",
     "vite-plugin-vue-devtools": "^7.7.7",
