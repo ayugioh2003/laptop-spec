@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
-import { writeDataToFile, writeDateStampedFile } from '../../src/utils/fileWriter.js';
+import { writeDataToFile, writeDateStampedFile } from '../../src/utils/fileWriter';
 
 // Mock fs module
 vi.mock('fs', () => ({

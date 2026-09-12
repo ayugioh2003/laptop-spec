@@ -1,15 +1,16 @@
 import axios from 'axios';
 import iconv from 'iconv-lite';
-import { CRAWLER_CONFIG } from '../../config.js';
+import { CRAWLER_CONFIG } from '../../config.ts';
 import { parseProductCards, extractRawProductData, hasValidChildren } from '../utils/dataParser.js';
 import { transformRawData } from '../utils/dataTransformer.js';
 import { filterIrrelevantProducts, addIndexToProducts } from '../utils/dataFilter.js';
 import { writeDataToFile } from '../utils/fileWriter.js';
+import type { LaptopSpec } from '@/types';
 
 /**
  * 處理爬蟲回應資料
  */
-export async function processData(responseData) {
+export async function processData(responseData: ArrayBuffer): Promise<LaptopSpec[]> {
   try {
     // 解碼網頁內容
     const body = iconv.decode(Buffer.from(responseData), CRAWLER_CONFIG.ENCODING);
@@ -17,7 +18,7 @@ export async function processData(responseData) {
     // 解析商品卡片
     const cardList = parseProductCards(body);
     const cardListLength = cardList.length;
-    const result = [];
+    const result: Omit<LaptopSpec, 'property'>[] = [];
 
     // 提取原始資料
     for (let i = 0; i < cardListLength; i += 1) {
@@ -53,12 +54,12 @@ export async function processData(responseData) {
 /**
  * 執行爬蟲任務
  */
-export async function runCrawler() {
+export async function runCrawler(): Promise<LaptopSpec[]> {
   try {
     const config = {
       url: CRAWLER_CONFIG.URL,
-      method: 'GET',
-      responseType: 'arraybuffer',
+      method: 'GET' as const,
+      responseType: 'arraybuffer' as const,
     };
 
     const response = await axios(config);

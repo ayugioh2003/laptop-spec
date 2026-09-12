@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseProductCards, extractRawProductData, hasValidChildren } from '../../src/utils/dataParser.js';
+import { parseProductCards, extractRawProductData, hasValidChildren } from '../../src/utils/dataParser';
 
 describe('dataParser', () => {
   describe('parseProductCards', () => {

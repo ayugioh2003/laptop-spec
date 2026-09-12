@@ -1,13 +1,14 @@
-import { CRAWLER_CONFIG } from '../../config.js';
+import { CRAWLER_CONFIG } from '../../config.ts';
+import type { LaptopSpec } from '@/types';
 
 /**
  * 過濾掉不相關的產品
  */
-export function filterIrrelevantProducts(products) {
+export function filterIrrelevantProducts(products: Omit<LaptopSpec, 'property'>[]): Omit<LaptopSpec, 'property'>[] {
   let filteredProducts = products;
 
   // 過濾掉不相關的產品
-  CRAWLER_CONFIG.FILTERS.EXCLUDED_KEYWORDS.forEach(keyword => {
+  CRAWLER_CONFIG.FILTERS.EXCLUDED_KEYWORDS.forEach((keyword: string) => {
     filteredProducts = filteredProducts.filter(item => !JSON.stringify(item).includes(keyword));
   });
 
@@ -22,9 +23,9 @@ export function filterIrrelevantProducts(products) {
 /**
  * 為產品加上索引編號
  */
-export function addIndexToProducts(products) {
+export function addIndexToProducts<T extends { index?: number }>(products: T[]): T[] {
   return products.map((item, index) => ({
-    index: index + 1,
     ...item,
+    index: index + 1,
   }));
 }

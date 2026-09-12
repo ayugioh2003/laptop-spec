@@ -28,7 +28,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: fetch laptop data
-        run: node crawler.js
+        run: pnpm crawler
 
       - name: Build
         run: pnpm build

@@ -1,22 +1,22 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import axios from 'axios';
-import { processData, runCrawler } from '../../src/services/crawlerService.js';
+import { processData, runCrawler } from '../../src/services/crawlerService';
 
 // Mock dependencies
 vi.mock('axios');
-vi.mock('../../src/utils/dataParser.js', () => ({
+vi.mock('../../src/utils/dataParser', () => ({
   parseProductCards: vi.fn(),
   extractRawProductData: vi.fn(),
   hasValidChildren: vi.fn()
 }));
-vi.mock('../../src/utils/dataTransformer.js', () => ({
+vi.mock('../../src/utils/dataTransformer', () => ({
   transformRawData: vi.fn()
 }));
-vi.mock('../../src/utils/dataFilter.js', () => ({
+vi.mock('../../src/utils/dataFilter', () => ({
   filterIrrelevantProducts: vi.fn(),
   addIndexToProducts: vi.fn()
 }));
-vi.mock('../../src/utils/fileWriter.js', () => ({
+vi.mock('../../src/utils/fileWriter', () => ({
   writeDataToFile: vi.fn()
 }));
 
@@ -38,10 +38,10 @@ describe('crawlerService', () => {
       axios.mockResolvedValue(mockResponse);
 
       // Mock all the utility functions
-      const { parseProductCards } = await import('../../src/utils/dataParser.js');
-      const { filterIrrelevantProducts, addIndexToProducts } = await import('../../src/utils/dataFilter.js');
-      const { transformRawData } = await import('../../src/utils/dataTransformer.js');
-      const { writeDataToFile } = await import('../../src/utils/fileWriter.js');
+      const { parseProductCards } = await import('../../src/utils/dataParser');
+      const { filterIrrelevantProducts, addIndexToProducts } = await import('../../src/utils/dataFilter');
+      const { transformRawData } = await import('../../src/utils/dataTransformer');
+      const { writeDataToFile } = await import('../../src/utils/fileWriter');
 
       parseProductCards.mockReturnValue([]);
       filterIrrelevantProducts.mockReturnValue([]);

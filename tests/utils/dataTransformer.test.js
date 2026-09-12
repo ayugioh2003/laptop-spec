@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { dataTransformers, transformRawData } from '../../src/utils/dataTransformer.js';
+import { dataTransformers, transformRawData } from '../../src/utils/dataTransformer';
 
 describe('dataTransformers', () => {
   describe('getBrand', () => {
@@ -21,8 +21,10 @@ describe('dataTransformers', () => {
       expect(dataTransformers.getSize('尺寸：14吋 2K')).toBe(14);
     });
 
-    it('should return NaN for invalid format', () => {
-      expect(dataTransformers.getSize('無效格式')).toBeNaN();
+    // 改用 0 而非 NaN：NaN 經 JSON.stringify 會變成 null，
+    // 與 LaptopProperty.size: number 的型別不符，也會讓篩選比較行為變得難預期
+    it('should return 0 for invalid format', () => {
+      expect(dataTransformers.getSize('無效格式')).toBe(0);
     });
   });
 

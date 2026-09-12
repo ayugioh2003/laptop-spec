@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterIrrelevantProducts, addIndexToProducts } from '../../src/utils/dataFilter.js';
+import { filterIrrelevantProducts, addIndexToProducts } from '../../src/utils/dataFilter';
 
 describe('dataFilter', () => {
   describe('filterIrrelevantProducts', () => {
