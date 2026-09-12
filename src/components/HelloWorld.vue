@@ -46,12 +46,19 @@
         :vgas="getters.laptopVGAs"
       />
 
-      <!-- 只看最愛 -->
+      <!-- 檢視切換：全部 / 我的最愛 -->
       <div class="favorite-bar">
-        <label>
-          <input type="checkbox" v-model="onlyFavorites" />
-          只看最愛（{{ favoriteCount }}）
-        </label>
+        <button
+          class="favorite-toggle"
+          :class="{ active: onlyFavorites }"
+          :aria-pressed="onlyFavorites"
+          @click="onlyFavorites = !onlyFavorites"
+        >
+          ★ 我的最愛（{{ favoriteCount }}）
+        </button>
+        <span v-if="onlyFavorites" class="favorite-hint">
+          目前顯示全部收藏，不受上方篩選條件影響
+        </span>
       </div>
 
       <!-- 產品列表 -->
@@ -100,8 +107,12 @@ const { favoriteCount, isFavorite } = useFavorites()
 
 const getters = reactive({
   filterLaptopSpecs: computed(() => {
-    const filtered = filterLaptops(state.laptopSpecs, state.form)
-    return onlyFavorites.value ? filtered.filter((item) => isFavorite(item.name)) : filtered
+    // 最愛是獨立檢視，刻意不套用其他篩選條件：
+    // 否則收藏的機器會因為價格／尺寸跑出篩選範圍而看不到
+    if (onlyFavorites.value) {
+      return state.laptopSpecs.filter((item) => isFavorite(item.name))
+    }
+    return filterLaptops(state.laptopSpecs, state.form)
   }),
   laptopBrands: computed(() => uniqueValues(state.laptopSpecs, 'brand')),
   laptopCPUs: computed(() => uniqueValues(state.laptopSpecs, 'cpu')),
@@ -140,15 +151,38 @@ onMounted(() => {
 
 <style scoped>
 .favorite-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
   margin-bottom: 1rem;
 }
 
-.favorite-bar label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+.favorite-toggle {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  color: #666;
+  font-size: 0.95rem;
   cursor: pointer;
-  user-select: none;
+  transition: all 0.2s;
+}
+
+.favorite-toggle:hover {
+  border-color: #f5a623;
+  color: #f5a623;
+}
+
+.favorite-toggle.active {
+  background: #f5a623;
+  border-color: #f5a623;
+  color: white;
+}
+
+.favorite-hint {
+  font-size: 0.85rem;
+  color: #888;
 }
 
 .laptop-finder {

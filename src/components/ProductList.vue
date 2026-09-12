@@ -54,6 +54,7 @@
         <table>
           <thead>
             <tr>
+              <th class="favorite-col"></th>
               <th>產品名稱</th>
               <th>品牌</th>
               <th>尺寸</th>
@@ -66,6 +67,17 @@
           </thead>
           <tbody>
             <tr v-for="product in sortedProducts" :key="product.index">
+              <td class="favorite-col">
+                <button
+                  class="favorite-btn"
+                  :class="{ active: isFavorite(product.name) }"
+                  :aria-pressed="isFavorite(product.name)"
+                  :title="isFavorite(product.name) ? '移除最愛' : '加入最愛'"
+                  @click="toggleFavorite(product.name)"
+                >
+                  {{ isFavorite(product.name) ? '★' : '☆' }}
+                </button>
+              </td>
               <td>
                 <a :href="`https://www.google.com/search?q=${product.name}`" target="_blank">
                   {{ product.name }}
@@ -90,6 +102,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 import ProductCard from './ProductCard.vue'
+import { useFavorites } from '@hooks/useFavorites.js'
+
+const { isFavorite, toggleFavorite } = useFavorites()
 
 const props = defineProps({
   products: {
@@ -141,6 +156,31 @@ function formatPrice(price) {
 </script>
 
 <style scoped>
+.favorite-col {
+  width: 1%;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.favorite-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #bbb;
+  transition: color 0.2s, transform 0.1s;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.15);
+}
+
+.favorite-btn.active {
+  color: #f5a623;
+}
+
 .product-list {
   background: white;
   border-radius: 8px;
