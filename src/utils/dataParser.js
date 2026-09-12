@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { CRAWLER_CONFIG } from '../../config.js';
 
 /**
