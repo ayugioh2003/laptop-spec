@@ -46,6 +46,14 @@
         :vgas="getters.laptopVGAs"
       />
 
+      <!-- 只看最愛 -->
+      <div class="favorite-bar">
+        <label>
+          <input type="checkbox" v-model="onlyFavorites" />
+          只看最愛（{{ favoriteCount }}）
+        </label>
+      </div>
+
       <!-- 產品列表 -->
       <ProductList :products="getters.filterLaptopSpecs" />
     </div>
@@ -57,6 +65,8 @@ import { reactive, computed, ref, onMounted } from 'vue'
 import FilterPanel from './FilterPanel.vue'
 import ProductList from './ProductList.vue'
 import StatsPanel from './StatsPanel.vue'
+import { filterLaptops, uniqueValues } from '@utils/laptopFilter.js'
+import { useFavorites } from '@hooks/useFavorites.js'
 
 // 接收父層 props
 defineProps({
@@ -85,33 +95,17 @@ const state = reactive({
   },
 })
 
+const onlyFavorites = ref(false)
+const { favoriteCount, isFavorite } = useFavorites()
+
 const getters = reactive({
   filterLaptopSpecs: computed(() => {
-    if (!state.laptopSpecs.length) return []
-    
-    return state.laptopSpecs
-      .filter((item) => !state.form.sizeMin || state.form.sizeMin <= item.property.size)
-      .filter((item) => !state.form.sizeMax || item.property.size <= state.form.sizeMax)
-      .filter((item) => !state.form.ramMin || item.property.ramMax >= state.form.ramMin)
-      .filter((item) => !state.form.weightMax || item.property.weight <= state.form.weightMax)
-      .filter((item) => !state.form.priceMin || state.form.priceMin <= item.property.price)
-      .filter((item) => !state.form.priceMax || item.property.price <= state.form.priceMax)
-      .filter((item) => !state.form.brand || item.property.brand === state.form.brand)
-      .filter((item) => !state.form.cpu || item.property.cpu === state.form.cpu)
-      .filter((item) => !state.form.vga || item.property.vga === state.form.vga)
+    const filtered = filterLaptops(state.laptopSpecs, state.form)
+    return onlyFavorites.value ? filtered.filter((item) => isFavorite(item.name)) : filtered
   }),
-  laptopBrands: computed(() => {
-    if (!state.laptopSpecs.length) return []
-    return [...new Set(state.laptopSpecs.map((lt) => lt.property.brand))].sort()
-  }),
-  laptopCPUs: computed(() => {
-    if (!state.laptopSpecs.length) return []
-    return [...new Set(state.laptopSpecs.map((lt) => lt.property.cpu))].sort()
-  }),
-  laptopVGAs: computed(() => {
-    if (!state.laptopSpecs.length) return []
-    return [...new Set(state.laptopSpecs.map((lt) => lt.property.vga))].sort()
-  }),
+  laptopBrands: computed(() => uniqueValues(state.laptopSpecs, 'brand')),
+  laptopCPUs: computed(() => uniqueValues(state.laptopSpecs, 'cpu')),
+  laptopVGAs: computed(() => uniqueValues(state.laptopSpecs, 'vga')),
 })
 
 async function loadData() {
@@ -145,6 +139,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.favorite-bar {
+  margin-bottom: 1rem;
+}
+
+.favorite-bar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  user-select: none;
+}
+
 .laptop-finder {
   max-width: 1200px;
   margin: 0 auto;

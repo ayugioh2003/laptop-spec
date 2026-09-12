@@ -9,6 +9,15 @@
         </h3>
         <div class="product-price">NT$ {{ formatPrice(product.property.price) }}</div>
       </div>
+      <button
+        class="favorite-btn"
+        :class="{ active: isFavorite(product.name) }"
+        :aria-pressed="isFavorite(product.name)"
+        :title="isFavorite(product.name) ? '移除最愛' : '加入最愛'"
+        @click="toggleFavorite(product.name)"
+      >
+        {{ isFavorite(product.name) ? '★' : '☆' }}
+      </button>
     </div>
 
     <div class="product-specs">
@@ -56,6 +65,10 @@
 </template>
 
 <script setup>
+import { useFavorites } from '@hooks/useFavorites.js'
+
+const { isFavorite, toggleFavorite } = useFavorites()
+
 defineProps({
   product: {
     type: Object,
@@ -88,6 +101,29 @@ function formatDate(dateString) {
 
 .product-header {
   margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.favorite-btn {
+  flex: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #bbb;
+  transition: color 0.2s, transform 0.1s;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.15);
+}
+
+.favorite-btn.active {
+  color: #f5a623;
 }
 
 .product-title {
