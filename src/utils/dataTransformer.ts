@@ -71,8 +71,9 @@ export const dataTransformers = {
     // 原價屋多半寫「1T」而非「1TB」，也有「1.5T」「6T」這類寫法，
     // 所以 B 要可省略、且必須允許小數，否則 1.5T 會被讀成 5T。
     // 取第一個出現的容量：那是總容量，括號內接著列的是各插槽明細。
-    const tb = ssdText.match(/(\d+(?:\.\d+)?)\s*TB?\b/i);
-    const gb = ssdText.match(/(\d+(?:\.\d+)?)\s*GB?\b/i);
+    // 不加 \b：實際資料有「512GM.2」這種單位後面直接接字母、沒有空格的寫法
+    const tb = ssdText.match(/(\d+(?:\.\d+)?)\s*TB?/i);
+    const gb = ssdText.match(/(\d+(?:\.\d+)?)\s*GB?/i);
 
     if (tb) {
       return Number(tb[1]) * 1024;

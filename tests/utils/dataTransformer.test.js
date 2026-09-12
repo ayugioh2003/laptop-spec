@@ -82,6 +82,12 @@ describe('dataTransformers', () => {
       expect(dataTransformers.getSSD('SSD：四槽/6T (2T M2*1 + 2T M.2*2)')).toBe(6144);
     });
 
+    // 實際抓到過「512GM.2」這種單位後直接接字母的寫法，不能要求詞界
+    it('should handle 單位後沒有空格的寫法', () => {
+      expect(dataTransformers.getSSD('SSD：單槽/512GM.2')).toBe(512);
+      expect(dataTransformers.getSSD('SSD：單槽/1TM.2')).toBe(1024);
+    });
+
     it('should return null for invalid format', () => {
       expect(dataTransformers.getSSD('無效格式')).toBeNull();
     });
