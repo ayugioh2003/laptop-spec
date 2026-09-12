@@ -62,7 +62,7 @@
       </div>
 
       <!-- 產品列表 -->
-      <ProductList :products="getters.filterLaptopSpecs" />
+      <ProductList :products="getters.filterLaptopSpecs" :emptyHint="emptyHint" />
     </div>
   </div>
 </template>
@@ -73,7 +73,7 @@ import FilterPanel from './FilterPanel.vue'
 import ProductList from './ProductList.vue'
 import StatsPanel from './StatsPanel.vue'
 import { filterLaptops, uniqueValues } from '@utils/laptopFilter.js'
-import { useFavorites } from '@hooks/useFavorites.js'
+import { useFavorites, resolveFavorites } from '@hooks/useFavorites.js'
 
 // 接收父層 props
 defineProps({
@@ -103,14 +103,14 @@ const state = reactive({
 })
 
 const onlyFavorites = ref(false)
-const { favoriteCount, isFavorite } = useFavorites()
+const { favorites, favoriteCount } = useFavorites()
 
 const getters = reactive({
   filterLaptopSpecs: computed(() => {
     // 最愛是獨立檢視，刻意不套用其他篩選條件：
     // 否則收藏的機器會因為價格／尺寸跑出篩選範圍而看不到
     if (onlyFavorites.value) {
-      return state.laptopSpecs.filter((item) => isFavorite(item.name))
+      return resolveFavorites(favorites.value, state.laptopSpecs)
     }
     return filterLaptops(state.laptopSpecs, state.form)
   }),
@@ -118,6 +118,12 @@ const getters = reactive({
   laptopCPUs: computed(() => uniqueValues(state.laptopSpecs, 'cpu')),
   laptopVGAs: computed(() => uniqueValues(state.laptopSpecs, 'vga')),
 })
+
+const emptyHint = computed(() =>
+  onlyFavorites.value
+    ? { icon: '☆', title: '還沒有收藏任何筆電', hint: '點卡片或列表上的 ☆ 就會加到這裡' }
+    : { icon: '🔍', title: '找不到符合條件的筆電', hint: '請調整篩選條件或重設篩選器' }
+)
 
 async function loadData() {
   try {

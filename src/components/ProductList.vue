@@ -34,9 +34,9 @@
     </div>
 
     <div v-if="sortedProducts.length === 0" class="empty-state">
-      <div class="empty-icon">🔍</div>
-      <h3>找不到符合條件的筆電</h3>
-      <p>請調整篩選條件或重設篩選器</p>
+      <div class="empty-icon">{{ emptyHint.icon }}</div>
+      <h3>{{ emptyHint.title }}</h3>
+      <p>{{ emptyHint.hint }}</p>
     </div>
 
     <div v-else>
@@ -73,7 +73,7 @@
                   :class="{ active: isFavorite(product.name) }"
                   :aria-pressed="isFavorite(product.name)"
                   :title="isFavorite(product.name) ? '移除最愛' : '加入最愛'"
-                  @click="toggleFavorite(product.name)"
+                  @click="toggleFavorite(product)"
                 >
                   {{ isFavorite(product.name) ? '★' : '☆' }}
                 </button>
@@ -82,6 +82,7 @@
                 <a :href="`https://www.google.com/search?q=${product.name}`" target="_blank">
                   {{ product.name }}
                 </a>
+                <span v-if="product.discontinued" class="discontinued-tag">已下架</span>
               </td>
               <td>{{ product.property.brand }}</td>
               <td>{{ product.property.size }}"</td>
@@ -110,6 +111,10 @@ const props = defineProps({
   products: {
     type: Array,
     default: () => []
+  },
+  emptyHint: {
+    type: Object,
+    default: () => ({ icon: '🔍', title: '找不到符合條件的筆電', hint: '請調整篩選條件或重設篩選器' })
   }
 })
 
@@ -156,6 +161,17 @@ function formatPrice(price) {
 </script>
 
 <style scoped>
+.discontinued-tag {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: #eee;
+  color: #888;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
 .favorite-col {
   width: 1%;
   text-align: center;

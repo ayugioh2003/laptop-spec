@@ -1,5 +1,5 @@
 <template>
-  <div class="product-card">
+  <div class="product-card" :class="{ discontinued: product.discontinued }">
     <div class="product-header">
       <div class="product-title">
         <h3>
@@ -7,14 +7,20 @@
             {{ product.name }}
           </a>
         </h3>
-        <div class="product-price">NT$ {{ formatPrice(product.property.price) }}</div>
+        <div class="product-price">
+          NT$ {{ formatPrice(product.property.price) }}
+          <span v-if="product.discontinued" class="discontinued-tag">已下架</span>
+        </div>
+        <div v-if="product.discontinued" class="discontinued-note">
+          已不在最新資料中，以下為收藏當下的規格與價格
+        </div>
       </div>
       <button
         class="favorite-btn"
         :class="{ active: isFavorite(product.name) }"
         :aria-pressed="isFavorite(product.name)"
         :title="isFavorite(product.name) ? '移除最愛' : '加入最愛'"
-        @click="toggleFavorite(product.name)"
+        @click="toggleFavorite(product)"
       >
         {{ isFavorite(product.name) ? '★' : '☆' }}
       </button>
@@ -104,6 +110,28 @@ function formatDate(dateString) {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
+}
+
+.product-card.discontinued {
+  background: #fafafa;
+  border: 1px dashed #ddd;
+}
+
+.discontinued-tag {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: #eee;
+  color: #888;
+  font-size: 0.75rem;
+  vertical-align: middle;
+}
+
+.discontinued-note {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: #999;
 }
 
 .favorite-btn {
