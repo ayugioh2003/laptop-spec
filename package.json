@@ -1,6 +1,9 @@
 {
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "packageManager": "pnpm@11.1.0",
   "scripts": {
     "dev": "vite",
@@ -9,7 +12,7 @@
     "test": "vitest",
     "test:run": "vitest run",
     "type-check": "vue-tsc --noEmit",
-    "crawler": "node --experimental-strip-types crawler.ts"
+    "crawler": "node crawler.ts"
   },
   "dependencies": {
     "@tanstack/vue-virtual": "^3.13.12",
