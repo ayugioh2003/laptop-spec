@@ -67,6 +67,21 @@ describe('dataTransformers', () => {
       expect(dataTransformers.getSSD('256G M.2')).toBe(256);
     });
 
+    // 原價屋實際上多半省略 B 寫成「1T」，且有小數與多插槽寫法
+    it('should handle 原價屋 的 T 寫法（省略 B）', () => {
+      expect(dataTransformers.getSSD('SSD：單槽/1T M.2')).toBe(1024);
+      expect(dataTransformers.getSSD('SSD：單槽/2T M.2')).toBe(2048);
+    });
+
+    it('should handle 小數容量（1.5T 不可被讀成 5T）', () => {
+      expect(dataTransformers.getSSD('SSD：雙槽/1.5T (512G M.2*1)')).toBe(1536);
+    });
+
+    it('should take 總容量 而非括號內的單條容量', () => {
+      expect(dataTransformers.getSSD('SSD：雙槽/1T (512G M.2 *2)')).toBe(1024);
+      expect(dataTransformers.getSSD('SSD：四槽/6T (2T M2*1 + 2T M.2*2)')).toBe(6144);
+    });
+
     it('should return null for invalid format', () => {
       expect(dataTransformers.getSSD('無效格式')).toBeNull();
     });

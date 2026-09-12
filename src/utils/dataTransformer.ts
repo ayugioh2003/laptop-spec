@@ -68,9 +68,12 @@ export const dataTransformers = {
    * 提取 SSD 容量 (GB)
    */
   getSSD(ssdText: string): number | null {
-    const tb = ssdText.match(/(\d+)TB/);
-    const gb = ssdText.match(/(\d+)(GB|G)/);
-    
+    // 原價屋多半寫「1T」而非「1TB」，也有「1.5T」「6T」這類寫法，
+    // 所以 B 要可省略、且必須允許小數，否則 1.5T 會被讀成 5T。
+    // 取第一個出現的容量：那是總容量，括號內接著列的是各插槽明細。
+    const tb = ssdText.match(/(\d+(?:\.\d+)?)\s*TB?\b/i);
+    const gb = ssdText.match(/(\d+(?:\.\d+)?)\s*GB?\b/i);
+
     if (tb) {
       return Number(tb[1]) * 1024;
     } else if (gb) {
