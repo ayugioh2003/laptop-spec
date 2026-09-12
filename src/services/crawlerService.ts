@@ -1,10 +1,10 @@
 import axios from 'axios';
 import iconv from 'iconv-lite';
 import { CRAWLER_CONFIG } from '../../config.ts';
-import { parseProductCards, extractRawProductData, hasValidChildren } from '../utils/dataParser.js';
-import { transformRawData } from '../utils/dataTransformer.js';
-import { filterIrrelevantProducts, addIndexToProducts } from '../utils/dataFilter.js';
-import { writeDataToFile } from '../utils/fileWriter.js';
+import { parseProductCards, extractRawProductData, hasValidChildren } from '../utils/dataParser.ts';
+import { transformRawData } from '../utils/dataTransformer.ts';
+import { filterIrrelevantProducts, addIndexToProducts } from '../utils/dataFilter.ts';
+import { writeDataToFile } from '../utils/fileWriter.ts';
 import type { LaptopSpec } from '@/types';
 
 /**

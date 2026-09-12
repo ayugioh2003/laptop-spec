@@ -1,4 +1,4 @@
-import { runCrawler } from './src/services/crawlerService.js';
+import { runCrawler } from './src/services/crawlerService.ts';
 
 /**
  * 主程式入口
