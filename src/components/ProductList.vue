@@ -100,22 +100,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { DisplayLaptop } from '@/types'
+
+interface EmptyHint { icon: string; title: string; hint: string }
 import { ref, computed } from 'vue'
 import ProductCard from './ProductCard.vue'
-import { useFavorites } from '@hooks/useFavorites.js'
+import { useFavorites } from '@hooks/useFavorites'
 
 const { isFavorite, toggleFavorite } = useFavorites()
 
-const props = defineProps({
-  products: {
-    type: Array,
-    default: () => []
-  },
-  emptyHint: {
-    type: Object,
-    default: () => ({ icon: '🔍', title: '找不到符合條件的筆電', hint: '請調整篩選條件或重設篩選器' })
-  }
+const props = withDefaults(defineProps<{
+  products?: DisplayLaptop[]
+  emptyHint?: EmptyHint
+}>(), {
+  products: () => [],
+  emptyHint: () => ({ icon: '🔍', title: '找不到符合條件的筆電', hint: '請調整篩選條件或重設篩選器' }),
 })
 
 const sortBy = ref('default')
@@ -155,7 +155,7 @@ function handleSort() {
   // 排序後不需要特別處理
 }
 
-function formatPrice(price) {
+function formatPrice(price: number) {
   return new Intl.NumberFormat('zh-TW').format(price)
 }
 </script>

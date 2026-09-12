@@ -115,26 +115,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { FilterForm } from '@/types'
 import { reactive, watch } from 'vue'
 
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  brands: {
-    type: Array,
-    default: () => []
-  },
-  cpus: {
-    type: Array,
-    default: () => []
-  },
-  vgas: {
-    type: Array,
-    default: () => []
-  }
+const props = withDefaults(defineProps<{
+  modelValue: FilterForm
+  brands?: string[]
+  cpus?: string[]
+  vgas?: string[]
+}>(), {
+  brands: () => [],
+  cpus: () => [],
+  vgas: () => [],
 })
 
 const emit = defineEmits(['update:modelValue'])

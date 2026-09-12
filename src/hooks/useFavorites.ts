@@ -1,4 +1,11 @@
 import { ref, computed, watch } from 'vue'
+import type { LaptopSpec } from '@/types'
+
+/** 收藏的項目：完整快照；舊格式只有 name，沒有規格 */
+type FavoriteEntry = LaptopSpec | { name: string }
+
+/** 對上目前資料後的結果，多一個是否已下架的標記 */
+export type ResolvedFavorite = LaptopSpec & { discontinued: boolean }
 
 const STORAGE_KEY = 'laptop-spec:favorites'
 
@@ -11,14 +18,15 @@ const STORAGE_KEY = 'laptop-spec:favorites'
  * 沒有快照就沒東西可以顯示。快照裡的價格是「收藏當下」的價格，
  * 筆電還在清單上時會以最新資料覆蓋顯示。
  */
-function load() {
+function load(): FavoriteEntry[] {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
     if (!Array.isArray(parsed)) return []
     return parsed
       // 舊格式只存字串名稱，轉成沒有規格的 stub（筆電還在清單上時仍可正常顯示）
-      .map((item) => (typeof item === 'string' ? { name: item } : item))
-      .filter((item) => item && typeof item.name === 'string')
+      .map((item: unknown) => (typeof item === 'string' ? { name: item } : item))
+      .filter((item): item is FavoriteEntry =>
+        !!item && typeof (item as FavoriteEntry).name === 'string')
   } catch {
     // 無痕模式、localStorage 被擋、或存進去的資料壞掉
     return []
@@ -41,8 +49,8 @@ export function useFavorites() {
   return {
     favorites,
     favoriteCount: computed(() => favorites.value.length),
-    isFavorite: (name) => favoriteSet.value.has(name),
-    toggleFavorite(product) {
+    isFavorite: (name: string) => favoriteSet.value.has(name),
+    toggleFavorite(product: LaptopSpec) {
       const i = favorites.value.findIndex((f) => f.name === product.name)
       if (i === -1) favorites.value.push({ ...product })
       else favorites.value.splice(i, 1)
@@ -54,7 +62,10 @@ export function useFavorites() {
  * 把收藏清單對上目前的資料：
  * 還在清單上的用最新資料，已下架的用當初存的快照並標記
  */
-export function resolveFavorites(favoriteList, laptops) {
+export function resolveFavorites(
+  favoriteList: FavoriteEntry[],
+  laptops: LaptopSpec[],
+): ResolvedFavorite[] {
   const live = new Map(laptops.map((lt) => [lt.name, lt]))
 
   return favoriteList
@@ -63,5 +74,5 @@ export function resolveFavorites(favoriteList, laptops) {
       return current ? { ...current, discontinued: false } : { ...fav, discontinued: true }
     })
     // 舊格式的 stub 又已下架，沒有規格可顯示
-    .filter((item) => item.property)
+    .filter((item): item is ResolvedFavorite => 'property' in item && !!item.property)
 }

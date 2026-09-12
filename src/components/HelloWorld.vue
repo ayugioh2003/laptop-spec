@@ -67,21 +67,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, computed, ref, onMounted } from 'vue'
 import FilterPanel from './FilterPanel.vue'
 import ProductList from './ProductList.vue'
 import StatsPanel from './StatsPanel.vue'
-import { filterLaptops, uniqueValues } from '@utils/laptopFilter.js'
-import { useFavorites, resolveFavorites } from '@hooks/useFavorites.js'
+import type { LaptopSpec, FilterForm } from '@/types'
+import { filterLaptops, uniqueValues } from '@utils/laptopFilter'
+import { useFavorites, resolveFavorites } from '@hooks/useFavorites'
 
 // 接收父層 props
-defineProps({
-  msg: String,
-})
+defineProps<{ msg?: string }>()
 
 const loading = ref(true)
-const error = ref(null)
+const error = ref<string | null>(null)
 
 const initForm = {
   sizeMin: 13,
@@ -95,7 +94,7 @@ const initForm = {
   vga: null,
 }
 
-const state = reactive({
+const state = reactive<{ laptopSpecs: LaptopSpec[]; form: FilterForm }>({
   laptopSpecs: [],
   form: {
     ...initForm,
@@ -141,7 +140,7 @@ async function loadData() {
     
     loading.value = false
   } catch (err) {
-    error.value = err.message || '載入資料失敗'
+    error.value = err instanceof Error ? err.message : '載入資料失敗'
     loading.value = false
   }
 }

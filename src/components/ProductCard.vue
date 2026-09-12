@@ -70,23 +70,19 @@
   </div>
 </template>
 
-<script setup>
-import { useFavorites } from '@hooks/useFavorites.js'
+<script setup lang="ts">
+import type { DisplayLaptop } from '@/types'
+import { useFavorites } from '@hooks/useFavorites'
 
 const { isFavorite, toggleFavorite } = useFavorites()
 
-defineProps({
-  product: {
-    type: Object,
-    required: true
-  }
-})
+defineProps<{ product: DisplayLaptop }>()
 
-function formatPrice(price) {
+function formatPrice(price: number) {
   return new Intl.NumberFormat('zh-TW').format(price)
 }
 
-function formatDate(dateString) {
+function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('zh-TW')
 }
 </script>

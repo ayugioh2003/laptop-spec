@@ -40,18 +40,16 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { LaptopSpec } from '@/types'
 import { computed } from 'vue'
 
-const props = defineProps({
-  totalProducts: {
-    type: Array,
-    default: () => []
-  },
-  filteredProducts: {
-    type: Array,
-    default: () => []
-  }
+const props = withDefaults(defineProps<{
+  totalProducts?: LaptopSpec[]
+  filteredProducts?: LaptopSpec[]
+}>(), {
+  totalProducts: () => [],
+  filteredProducts: () => [],
 })
 
 const totalCount = computed(() => props.totalProducts.length)
@@ -84,7 +82,7 @@ const lastUpdated = computed(() => {
   return date.toLocaleString('zh-TW')
 })
 
-function formatPrice(price) {
+function formatPrice(price: number) {
   return new Intl.NumberFormat('zh-TW').format(price)
 }
 </script>

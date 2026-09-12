@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterLaptops, uniqueValues } from '../../src/utils/laptopFilter.js';
+import { filterLaptops, uniqueValues } from '../../src/utils/laptopFilter';
 
 const laptop = (name, property) => ({ name, property });
 

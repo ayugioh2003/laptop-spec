@@ -29,6 +29,9 @@ export interface LaptopSpec {
   property: LaptopProperty;
 }
 
+/** 顯示用：列表中可能混入已下架的收藏，靠 discontinued 區分 */
+export type DisplayLaptop = LaptopSpec & { discontinued?: boolean };
+
 export interface FilterForm {
   sizeMin: number | null;
   sizeMax: number | null;

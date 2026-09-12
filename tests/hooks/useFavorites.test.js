@@ -16,7 +16,7 @@ function stubStorage(initial = {}) {
 /** 每個 case 都要重新 import，因為收藏是模組層級單例 */
 async function freshUseFavorites() {
   vi.resetModules();
-  const mod = await import('../../src/hooks/useFavorites.js');
+  const mod = await import('../../src/hooks/useFavorites');
   return { ...mod.useFavorites(), resolveFavorites: mod.resolveFavorites };
 }
 
